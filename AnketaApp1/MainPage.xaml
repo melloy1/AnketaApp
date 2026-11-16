@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AnketaApp1.MainPage"
+             Title="Анкета путешественника"
+             BackgroundColor="#F4F7FB">
+
+    <!-- Корневой Grid: явно заданы строки и столбцы, у детей указаны Grid.Row / Grid.Column -->
+    <Grid RowDefinitions="Auto,*,Auto"
+          ColumnDefinitions="*,*"
+          Padding="16"
+          RowSpacing="12"
+          ColumnSpacing="12">
+
+        <!-- ===== Шапка ===== -->
+        <VerticalStackLayout Grid.Row="0"
+                             Grid.Column="0"
+                             Grid.ColumnSpan="2"
+                             Spacing="4">
+            <Image Source="dotnet_bot.png"
+                   Aspect="AspectFit"
+                   HeightRequest="100"
+                   Margin="0,0,0,4" />
+            <Label Text="Анкета путешественника"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   TextColor="#0D47A1"
+                   HorizontalOptions="Center" />
+            <Label Text="Расскажите о поездке мечты — мы подберём тур"
+                   FontSize="14"
+                   FontAttributes="Italic"
+                   TextColor="#546E7A"
+                   HorizontalOptions="Center" />
+        </VerticalStackLayout>
+
+        <!-- ===== Прокручиваемая часть анкеты ===== -->
+        <ScrollView x:Name="ScrollMain"
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2">
+            <VerticalStackLayout Spacing="10" Padding="4">
+
+                <!-- Имя -->
+                <Label Text="Ваше имя *" FontSize="16" FontAttributes="Bold" Margin="0,4,0,0" />
+                <Entry x:Name="EntryName"
+                       Placeholder="Например, Анна"
+                       Keyboard="Text"
+                       MaxLength="40"
+                       Margin="0,0,0,4"
+                       TextChanged="OnRequiredFieldChanged" />
+
+                <!-- Телефон -->
+                <Label Text="Телефон *" FontSize="16" FontAttributes="Bold" />
+                <Entry x:Name="EntryPhone"
+                       Placeholder="+7 900 000-00-00"
+                       Keyboard="Telephone"
+                       MaxLength="16"
+                       Margin="0,0,0,4"
+                       TextChanged="OnRequiredFieldChanged" />
+
+                <!-- Направление -->
+                <Label Text="Направление *" FontSize="16" FontAttributes="Bold" />
+                <Picker x:Name="PickerDestination"
+                        Title="Выберите страну"
+                        Margin="0,0,0,4">
+                    <Picker.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>Казахстан</x:String>
+                            <x:String>Турция</x:String>
+                            <x:String>Грузия</x:String>
+                            <x:String>ОАЭ</x:String>
+                            <x:String>Россия (Алтай)</x:String>
+                        </x:Array>
+                    </Picker.ItemsSource>
+                </Picker>
+
+                <!-- Тип отдыха: 3 RadioButton в одной группе -->
+                <Label Text="Тип отдыха" FontSize="16" FontAttributes="Bold" />
+                <RadioButton x:Name="RadioBeach"
+                             Content="Пляжный"
+                             GroupName="TripType"
+                             Value="Beach"
+                             Margin="0,0,0,0" />
+                <RadioButton x:Name="RadioExcursion"
+                             Content="Экскурсионный"
+                             GroupName="TripType"
+                             Value="Excursion"
+                             Margin="0,0,0,0" />
+                <RadioButton x:Name="RadioActive"
+                             Content="Активный (горы, походы)"
+                             GroupName="TripType"
+                             Value="Active"
+                             Margin="0,0,0,4" />
+
+                <!-- Дата поездки -->
+                <Label Text="Желаемая дата вылета" FontSize="16" FontAttributes="Bold" />
+                <DatePicker x:Name="DatePickerTrip"
+                            Format="dd.MM.yyyy"
+                            MinimumDate="2026-01-01"
+                            MaximumDate="2027-12-31"
+                            Date="2027-06-01"
+                            Margin="0,0,0,4" />
+
+                <!-- Количество путешественников: Stepper + привязка x:Reference -->
+                <Label Text="{Binding Source={x:Reference StepperTravelers}, Path=Value, Mode=OneWay, StringFormat='Количество путешественников: {0}'}"
+                       FontSize="16"
+                       FontAttributes="Bold" />
+                <Stepper x:Name="StepperTravelers"
+                         Maximum="10"
+                         Minimum="1"
+                         Increment="1"
+                         Value="2"
+                         Margin="0,0,0,4" />
+
+                <!-- Бюджет: Slider + привязка x:Reference -->
+                <Label Text="{Binding Source={x:Reference SliderBudget}, Path=Value, Mode=OneWay, StringFormat='Бюджет на человека: {0:N0} ₽'}"
+                       FontSize="16"
+                       FontAttributes="Bold" />
+                <Slider x:Name="SliderBudget"
+                        Maximum="500000"
+                        Minimum="20000"
+                        Value="100000"
+                        MinimumTrackColor="#1E88E5"
+                        Margin="0,0,0,4" />
+
+                <!-- Дополнительные услуги: CheckBox -->
+                <Label Text="Дополнительные услуги" FontSize="16" FontAttributes="Bold" />
+                <HorizontalStackLayout Spacing="8" Margin="0,0,0,0">
+                    <CheckBox x:Name="CheckTransfer"
+                              IsChecked="False"
+                              Color="#1E88E5" />
+                    <Label Text="Трансфер из аэропорта" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Spacing="8" Margin="0,0,0,4">
+                    <CheckBox x:Name="CheckInsurance"
+                              IsChecked="True"
+                              Color="#43A047" />
+                    <Label Text="Туристическая страховка" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+
+                <!-- Рассылка: Switch -->
+                <HorizontalStackLayout Spacing="8" Margin="0,0,0,4">
+                    <Switch x:Name="SwitchNewsletter"
+                            IsToggled="True"
+                            OnColor="#FB8C00" />
+                    <Label Text="Получать горящие предложения" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+
+                <!-- Пожелания: Editor -->
+                <Label Text="Особые пожелания" FontSize="16" FontAttributes="Bold" />
+                <Editor x:Name="EditorWishes"
+                        Placeholder="Например: отель у моря, вегетарианское питание…"
+                        AutoSize="TextChanges"
+                        MaxLength="300"
+                        Margin="0,0,0,8" />
+
+                <!-- Подсказка: видна, пока не заполнены обязательные поля -->
+                <Label x:Name="LabelHint"
+                       Text="Заполните имя и телефон, чтобы посмотреть результат"
+                       FontSize="13"
+                       TextColor="#78909C"
+                       Margin="0,0,0,4" />
+
+                <!-- Ошибки проверки -->
+                <Label x:Name="LabelErrors"
+                       IsVisible="False"
+                       TextColor="#D32F2F"
+                       FontSize="14"
+                       Margin="0,0,0,4" />
+
+                <!-- Сводка ответов -->
+                <Border x:Name="ResultPanel"
+                        IsVisible="False"
+                        Stroke="#1E88E5"
+                        StrokeThickness="1"
+                        BackgroundColor="White"
+                        Padding="12"
+                        Margin="0,4,0,8">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Ваша анкета"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="#0D47A1" />
+                        <Label x:Name="LabelResult" FontSize="14" />
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- ===== Кнопки ===== -->
+        <Button x:Name="ButtonShowResult"
+                Grid.Row="2"
+                Grid.Column="0"
+                Text="Показать результат"
+                BackgroundColor="#1E88E5"
+                TextColor="White"
+                IsEnabled="False"
+                Clicked="OnShowResultClicked" />
+        <Button x:Name="ButtonClear"
+                Grid.Row="2"
+                Grid.Column="1"
+                Text="Очистить"
+                BackgroundColor="#CFD8DC"
+                TextColor="#263238"
+                Clicked="OnClearClicked" />
+    </Grid>
+</ContentPage>
